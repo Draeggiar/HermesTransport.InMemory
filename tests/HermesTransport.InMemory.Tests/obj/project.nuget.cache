@@ -1,10 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "7fMHJc5bfnu+zL8dMIt8iD2J5bxayPRjnRqjQBYKHRQh0F0mNetA93S5pzwq1CQhKz6I1fFo8gSKUiUXG6ICDg==",
+  "dgSpecHash": "m6Vx6pz+NV8H73QT91+HZ5l9e17k5fRiJuG4xE8KZR4FsJBuso9oYK3iL/LsMaJeor9hf6g5q+d5lEwYaAF8rA==",
   "success": true,
   "projectFilePath": "/home/runner/work/HermesTransport.InMemory/HermesTransport.InMemory/tests/HermesTransport.InMemory.Tests/HermesTransport.InMemory.Tests.csproj",
   "expectedPackageFiles": [
     "/home/runner/.nuget/packages/coverlet.collector/6.0.0/coverlet.collector.6.0.0.nupkg.sha512",
+    "/home/runner/.nuget/packages/hermestransport/1.0.0/hermestransport.1.0.0.nupkg.sha512",
     "/home/runner/.nuget/packages/microsoft.codecoverage/17.6.0/microsoft.codecoverage.17.6.0.nupkg.sha512",
     "/home/runner/.nuget/packages/microsoft.net.test.sdk/17.6.0/microsoft.net.test.sdk.17.6.0.nupkg.sha512",
     "/home/runner/.nuget/packages/microsoft.netcore.platforms/1.1.0/microsoft.netcore.platforms.1.1.0.nupkg.sha512",

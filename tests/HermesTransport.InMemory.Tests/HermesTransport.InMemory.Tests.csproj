@@ -22,4 +22,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\HermesTransport.InMemory\HermesTransport.InMemory.csproj" />
+  </ItemGroup>
+
 </Project>

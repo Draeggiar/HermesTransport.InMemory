@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("HermesTransport.InMemory")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f92230566de378831ac65e01ae5d82baa8fef197")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c60ab7a7b1ece2f582981d63eece5ba14e06c6b2")]
 [assembly: System.Reflection.AssemblyProductAttribute("HermesTransport.InMemory")]
 [assembly: System.Reflection.AssemblyTitleAttribute("HermesTransport.InMemory")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
