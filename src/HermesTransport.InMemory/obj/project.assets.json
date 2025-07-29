@@ -1,0 +1,99 @@
+{
+  "version": 3,
+  "targets": {
+    "net8.0": {
+      "HermesTransport/1.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/net8.0/HermesTransport.dll": {}
+        },
+        "runtime": {
+          "lib/net8.0/HermesTransport.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "HermesTransport/1.0.0": {
+      "sha512": "/zGTO2/eJy0zn7RP21PcpYkXH8rkWEw0cW4NERZ+f56TvOY0Q4vb7pOAzGJ+LEFYZlKgPky6sYyspSwX6fGK3Q==",
+      "type": "package",
+      "path": "hermestransport/1.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "hermestransport.1.0.0.nupkg.sha512",
+        "hermestransport.nuspec",
+        "icon.png",
+        "lib/net8.0/HermesTransport.dll"
+      ]
+    }
+  },
+  "projectFileDependencyGroups": {
+    "net8.0": [
+      "HermesTransport >= 1.0.0"
+    ]
+  },
+  "packageFolders": {
+    "/home/runner/.nuget/packages/": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "/home/runner/work/HermesTransport.InMemory/HermesTransport.InMemory/src/HermesTransport.InMemory/HermesTransport.InMemory.csproj",
+      "projectName": "HermesTransport.InMemory",
+      "projectPath": "/home/runner/work/HermesTransport.InMemory/HermesTransport.InMemory/src/HermesTransport.InMemory/HermesTransport.InMemory.csproj",
+      "packagesPath": "/home/runner/.nuget/packages/",
+      "outputPath": "/home/runner/work/HermesTransport.InMemory/HermesTransport.InMemory/src/HermesTransport.InMemory/obj/",
+      "projectStyle": "PackageReference",
+      "configFilePaths": [
+        "/home/runner/.nuget/NuGet/NuGet.Config"
+      ],
+      "originalTargetFrameworks": [
+        "net8.0"
+      ],
+      "sources": {
+        "https://api.nuget.org/v3/index.json": {}
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "projectReferences": {}
+        }
+      },
+      "warningProperties": {
+        "warnAsError": [
+          "NU1605"
+        ]
+      }
+    },
+    "frameworks": {
+      "net8.0": {
+        "targetAlias": "net8.0",
+        "dependencies": {
+          "HermesTransport": {
+            "target": "Package",
+            "version": "[1.0.0, )"
+          }
+        },
+        "imports": [
+          "net461",
+          "net462",
+          "net47",
+          "net471",
+          "net472",
+          "net48",
+          "net481"
+        ],
+        "assetTargetFallback": true,
+        "warn": true,
+        "frameworkReferences": {
+          "Microsoft.NETCore.App": {
+            "privateAssets": "all"
+          }
+        },
+        "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/8.0.118/PortableRuntimeIdentifierGraph.json"
+      }
+    }
+  }
+}

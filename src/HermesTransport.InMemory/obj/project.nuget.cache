@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "Xjaq4IZ2BwB3nF+pQeSVnxEQGBvzo85UyrK9PgUFTxSL2KBmNN3OY6ViMk2PHZ8jhTtw/ZObiCMx3O8dXITyag==",
+  "success": true,
+  "projectFilePath": "/home/runner/work/HermesTransport.InMemory/HermesTransport.InMemory/src/HermesTransport.InMemory/HermesTransport.InMemory.csproj",
+  "expectedPackageFiles": [
+    "/home/runner/.nuget/packages/hermestransport/1.0.0/hermestransport.1.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}

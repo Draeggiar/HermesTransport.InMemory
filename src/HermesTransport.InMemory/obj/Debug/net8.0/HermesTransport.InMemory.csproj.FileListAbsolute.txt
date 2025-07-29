@@ -1,0 +1,13 @@
+/home/runner/work/HermesTransport.InMemory/HermesTransport.InMemory/src/HermesTransport.InMemory/bin/Debug/net8.0/HermesTransport.InMemory.deps.json
+/home/runner/work/HermesTransport.InMemory/HermesTransport.InMemory/src/HermesTransport.InMemory/bin/Debug/net8.0/HermesTransport.InMemory.dll
+/home/runner/work/HermesTransport.InMemory/HermesTransport.InMemory/src/HermesTransport.InMemory/bin/Debug/net8.0/HermesTransport.InMemory.pdb
+/home/runner/work/HermesTransport.InMemory/HermesTransport.InMemory/src/HermesTransport.InMemory/obj/Debug/net8.0/HermesTransport.InMemory.csproj.AssemblyReference.cache
+/home/runner/work/HermesTransport.InMemory/HermesTransport.InMemory/src/HermesTransport.InMemory/obj/Debug/net8.0/HermesTransport.InMemory.GeneratedMSBuildEditorConfig.editorconfig
+/home/runner/work/HermesTransport.InMemory/HermesTransport.InMemory/src/HermesTransport.InMemory/obj/Debug/net8.0/HermesTransport.InMemory.AssemblyInfoInputs.cache
+/home/runner/work/HermesTransport.InMemory/HermesTransport.InMemory/src/HermesTransport.InMemory/obj/Debug/net8.0/HermesTransport.InMemory.AssemblyInfo.cs
+/home/runner/work/HermesTransport.InMemory/HermesTransport.InMemory/src/HermesTransport.InMemory/obj/Debug/net8.0/HermesTransport.InMemory.csproj.CoreCompileInputs.cache
+/home/runner/work/HermesTransport.InMemory/HermesTransport.InMemory/src/HermesTransport.InMemory/obj/Debug/net8.0/HermesTransport.InMemory.sourcelink.json
+/home/runner/work/HermesTransport.InMemory/HermesTransport.InMemory/src/HermesTransport.InMemory/obj/Debug/net8.0/HermesTransport.InMemory.dll
+/home/runner/work/HermesTransport.InMemory/HermesTransport.InMemory/src/HermesTransport.InMemory/obj/Debug/net8.0/refint/HermesTransport.InMemory.dll
+/home/runner/work/HermesTransport.InMemory/HermesTransport.InMemory/src/HermesTransport.InMemory/obj/Debug/net8.0/HermesTransport.InMemory.pdb
+/home/runner/work/HermesTransport.InMemory/HermesTransport.InMemory/src/HermesTransport.InMemory/obj/Debug/net8.0/ref/HermesTransport.InMemory.dll
