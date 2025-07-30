@@ -1,4 +1,6 @@
 using HermesTransport;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using System.Collections.Concurrent;
 using System.Threading.Channels;
 
@@ -13,6 +15,7 @@ public class InMemoryMessageBroker : IMessageBroker, IDisposable
     private readonly InMemoryCommandSender _commandSender;
     private readonly InMemoryBrokerOptions _options;
     private readonly ConcurrentDictionary<string, bool> _topics = new();
+    private readonly ILogger<InMemoryMessageBroker> _logger;
     private bool _isConnected = false;
     private bool _disposed = false;
 
@@ -23,13 +26,14 @@ public class InMemoryMessageBroker : IMessageBroker, IDisposable
     {
     }
 
-    public InMemoryMessageBroker(InMemoryBrokerOptions options)
+    public InMemoryMessageBroker(InMemoryBrokerOptions options, ILoggerFactory? loggerFactory = null)
     {
         _options = options ?? throw new ArgumentNullException(nameof(options));
+        _logger = loggerFactory?.CreateLogger<InMemoryMessageBroker>() ?? NullLogger<InMemoryMessageBroker>.Instance;
         _publisher = new InMemoryMessagePublisher(this);
         _subscriber = new InMemoryMessageSubscriber(this);
         _eventPublisher = new InMemoryEventPublisher(this);
-        _commandSender = new InMemoryCommandSender(this);
+        _commandSender = new InMemoryCommandSender(this, loggerFactory?.CreateLogger<InMemoryCommandSender>());
     }
 
     public Task ConnectAsync(CancellationToken cancellationToken = default)
