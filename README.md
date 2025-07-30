@@ -190,6 +190,101 @@ Publisher → Topic → Fan-out → [Subscription1, Subscription2, ...] → Hand
 
 Each subscription receives its own copy of the message, enabling true fan-out delivery.
 
+## 🔌 Dependency Injection
+
+HermesTransport.InMemory provides extension methods for easy integration with Microsoft.Extensions.DependencyInjection:
+
+### Basic Registration
+
+```csharp
+using HermesTransport.InMemory;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+
+var hostBuilder = Host.CreateDefaultBuilder()
+    .ConfigureServices((context, services) =>
+    {
+        // Register HermesTransport.InMemory services
+        services.AddHermesTransportInMemory(options =>
+        {
+            options.DefaultDispatchMode = DispatchMode.Asynchronous;
+            options.DefaultMaxConcurrency = 4;
+        });
+
+        // Register your message handlers
+        services.AddScoped<OrderHandler>();
+        services.AddScoped<InventoryHandler>();
+    });
+
+var host = hostBuilder.Build();
+
+// Use services from DI container
+var eventPublisher = host.Services.GetRequiredService<IEventPublisher>();
+var subscriber = host.Services.GetRequiredService<IMessageSubscriber>();
+```
+
+### With Hosted Service
+
+For applications that need automatic broker lifecycle management:
+
+```csharp
+services.AddHermesTransportInMemoryWithHostedService(options =>
+{
+    options.DefaultDispatchMode = DispatchMode.Asynchronous;
+    options.DefaultMaxConcurrency = 4;
+});
+```
+
+The hosted service will automatically:
+- Connect the broker on application start
+- Disconnect the broker on application shutdown
+- Provide logging for lifecycle events
+
+### Registered Services
+
+The extension methods register the following services:
+
+- `InMemoryBrokerOptions` (Singleton)
+- `InMemoryMessageBroker` (Singleton)
+- `IMessageBroker` (Singleton)
+- `IMessagePublisher` (Singleton)
+- `IMessageSubscriber` (Singleton)
+- `IEventPublisher` (Singleton)
+- `ICommandSender` (Singleton)
+
+## 📝 Logging and Exception Handling
+
+HermesTransport.InMemory integrates with Microsoft.Extensions.Logging for comprehensive logging:
+
+### Logging Features
+
+- **Debug logs**: Message publishing and handling operations
+- **Warning logs**: Cancelled operations  
+- **Error logs**: Failed operations and exceptions
+- **Information logs**: Hosted service lifecycle events
+
+### Exception Handling
+
+- **Null validation**: Commands and events are validated for null values
+- **Cancellation support**: Proper handling of `CancellationToken`
+- **Error isolation**: Exceptions in one subscription don't affect others
+- **Graceful degradation**: Failed message deliveries are logged but don't stop the broker
+
+### Configuration Example
+
+```csharp
+var hostBuilder = Host.CreateDefaultBuilder()
+    .ConfigureLogging(logging =>
+    {
+        logging.AddConsole();
+        logging.SetMinimumLevel(LogLevel.Debug);
+    })
+    .ConfigureServices((context, services) =>
+    {
+        services.AddHermesTransportInMemory();
+    });
+```
+
 ## 🧪 Testing
 
 The library includes comprehensive tests covering:
@@ -212,6 +307,7 @@ dotnet test
 See the `/examples` directory for complete working examples:
 
 - **BasicUsageExample**: Demonstrates core features, sync/async dispatch, and multiple subscribers
+- **ServiceCollectionExample**: Shows dependency injection integration and hosted service usage
 
 Run the example:
 
