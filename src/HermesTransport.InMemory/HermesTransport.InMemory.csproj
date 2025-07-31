@@ -4,12 +4,32 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    
+    <!-- NuGet Package Properties -->
+    <PackageId>HermesTransport.InMemory</PackageId>
+    <PackageVersion>1.0.0</PackageVersion>
+    <PackageDescription>Production-ready in-memory message broker implementation for HermesTransport with dependency injection support, comprehensive logging, and flexible dispatch modes.</PackageDescription>
+    <PackageAuthors>Draeggiar</PackageAuthors>
+    <PackageTags>messaging;inmemory;broker;hermestransport;pubsub;cqrs;events;commands;dotnet</PackageTags>
+    <PackageProjectUrl>https://github.com/Draeggiar/HermesTransport.InMemory</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Draeggiar/HermesTransport.InMemory</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="HermesTransport" Version="1.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="../../README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
 </Project>
