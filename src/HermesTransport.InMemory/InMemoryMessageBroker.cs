@@ -95,8 +95,8 @@ public class InMemoryMessageBroker : IMessageBroker, IDisposable
                 }
                 catch (Exception ex)
                 {
-                    // Log error - in production, use proper logging
-                    Console.WriteLine($"Error delivering message to subscription: {ex.Message}");
+                    // Log error using the logger
+                    _logger.LogError(ex, "Error delivering message to subscription.");
                 }
             }
         }
