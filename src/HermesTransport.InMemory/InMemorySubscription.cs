@@ -120,7 +120,7 @@ internal class InMemorySubscription<TMessage> : ISubscription, IInternalSubscrip
                     catch (Exception ex)
                     {
                         // Log error (in a real implementation, you'd use ILogger)
-                        Console.WriteLine($"Error processing message {message.MessageId}: {ex.Message}");
+                        _logger.LogError(ex, "Error processing message {MessageId}", message.MessageId);
                     }
                 }
             }
