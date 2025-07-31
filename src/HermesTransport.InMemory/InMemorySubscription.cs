@@ -3,7 +3,7 @@ using System.Threading.Channels;
 
 namespace HermesTransport.InMemory;
 
-internal class InMemorySubscription<TMessage> : ISubscription, IInternalSubscription, IDisposable 
+internal class InMemorySubscription<TMessage> : ISubscription, IInternalSubscription, IDisposable, IAsyncDisposable
     where TMessage : IMessage
 {
     private readonly string _topic;
@@ -104,23 +104,18 @@ internal class InMemorySubscription<TMessage> : ISubscription, IInternalSubscrip
                 // Cast to the expected type (we already filtered in DeliverMessageAsync)
                 if (message is TMessage typedMessage)
                 {
-                    try
+                    // For concurrent processing, we don't wait for the task to complete
+                    // The semaphore handles the concurrency limit
+                    if (_options.MaxConcurrency == 1)
                     {
-                        if (_options.MaxConcurrency == 1)
-                        {
-                            // Synchronous processing
-                            await ProcessMessageSynchronously(typedMessage, cancellationToken);
-                        }
-                        else
-                        {
-                            // Asynchronous parallel processing
-                            _ = ProcessMessageAsynchronously(typedMessage, cancellationToken);
-                        }
+                        // For sequential processing, await each message
+                        await ProcessMessageAsync(typedMessage, cancellationToken);
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        // Log error (in a real implementation, you'd use ILogger)
-                        _logger.LogError(ex, "Error processing message {MessageId}", message.MessageId);
+                        // For concurrent processing, start the task but don't await it
+                        // The semaphore ensures we don't exceed the concurrency limit
+                        _ = ProcessMessageAsync(typedMessage, cancellationToken);
                     }
                 }
             }
@@ -131,12 +126,17 @@ internal class InMemorySubscription<TMessage> : ISubscription, IInternalSubscrip
         }
     }
 
-    private async Task ProcessMessageSynchronously(TMessage message, CancellationToken cancellationToken)
+    private async Task ProcessMessageAsync(TMessage message, CancellationToken cancellationToken)
     {
         await _semaphore.WaitAsync(cancellationToken);
         try
         {
             await _handler.HandleAsync(message, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            // Log error to console for now (would use ILogger in production)
+            Console.WriteLine($"Error processing message {message.MessageId}: {ex.Message}");
         }
         finally
         {
@@ -144,40 +144,29 @@ internal class InMemorySubscription<TMessage> : ISubscription, IInternalSubscrip
         }
     }
 
-    private async Task ProcessMessageAsynchronously(TMessage message, CancellationToken cancellationToken)
+    public async ValueTask DisposeAsync()
     {
-        await _semaphore.WaitAsync(cancellationToken);
+        if (_disposed) return;
+
+        await StopAsync();
         
-        // Don't use fire-and-forget, await the task completion
-        _ = Task.Run(async () =>
-        {
-            try
-            {
-                await _handler.HandleAsync(message, cancellationToken);
-            }
-            catch (Exception ex)
-            {
-                // Log error (in a real implementation, you'd use ILogger)
-                Console.WriteLine($"Error in async handler for message {message.MessageId}: {ex.Message}");
-            }
-            finally
-            {
-                _semaphore.Release();
-            }
-        }, cancellationToken);
+        _cancellationTokenSource.Dispose();
+        _semaphore.Dispose();
+        _disposed = true;
     }
 
+    // Keep the synchronous Dispose for compatibility
     public void Dispose()
     {
         if (_disposed) return;
 
         try
         {
-            StopAsync().Wait(TimeSpan.FromSeconds(2));
+            StopAsync().GetAwaiter().GetResult();
         }
         catch
         {
-            // Ignore timeout during disposal
+            // Ignore exceptions during disposal
         }
         
         _cancellationTokenSource.Dispose();
