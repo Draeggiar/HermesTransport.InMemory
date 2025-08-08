@@ -190,67 +190,42 @@ Publisher → Topic → Fan-out → [Subscription1, Subscription2, ...] → Hand
 
 Each subscription receives its own copy of the message, enabling true fan-out delivery.
 
-## 🔌 Dependency Injection
+## 🏗️ Using with IHostBuilder
 
-HermesTransport.InMemory provides extension methods for easy integration with Microsoft.Extensions.DependencyInjection:
-
-### Basic Registration
+HermesTransport.InMemory can be registered with the .NET Generic Host for dependency injection and configuration. This is the recommended approach for ASP.NET Core, Worker Services, and other modern .NET applications.
 
 ```csharp
+using HermesTransport;
 using HermesTransport.InMemory;
+using HermesTransport.InMemory.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-var hostBuilder = Host.CreateDefaultBuilder()
+var host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((context, services) =>
     {
-        // Register HermesTransport.InMemory services
-        services.AddHermesTransportInMemory(options =>
+        services.AddHermesTransport(options =>
         {
-            options.DefaultDispatchMode = DispatchMode.Asynchronous;
-            options.DefaultMaxConcurrency = 4;
+            options.AddInMemoryBroker(inMemory =>
+            {
+                // Optional: configure in-memory broker options
+                inMemory.MaxConcurrency = 4;
+                // Register as command, event, or message broker as needed
+                inMemory.UseForCommands();
+                inMemory.UseForEvents();
+            });
         });
+        // Register your handlers, etc.
+        services.AddSingleton<IEventHandler<OrderCreated>, OrderEventHandler>();
+    })
+    .Build();
 
-        // Register your message handlers
-        services.AddScoped<OrderHandler>();
-        services.AddScoped<InventoryHandler>();
-    });
-
-var host = hostBuilder.Build();
-
-// Use services from DI container
-var eventPublisher = host.Services.GetRequiredService<IEventPublisher>();
-var subscriber = host.Services.GetRequiredService<IMessageSubscriber>();
+await host.RunAsync();
 ```
 
-### With Hosted Service
-
-For applications that need automatic broker lifecycle management:
-
-```csharp
-services.AddHermesTransportInMemoryWithHostedService(options =>
-{
-    options.DefaultDispatchMode = DispatchMode.Asynchronous;
-    options.DefaultMaxConcurrency = 4;
-});
-```
-
-The hosted service will automatically:
-- Connect the broker on application start
-- Disconnect the broker on application shutdown
-- Provide logging for lifecycle events
-
-### Registered Services
-
-The extension methods register the following services:
-
-- `InMemoryBrokerOptions` (Singleton)
-- `InMemoryMessageBroker` (Singleton)
-- `IMessageBroker` (Singleton)
-- `IMessagePublisher` (Singleton)
-- `IMessageSubscriber` (Singleton)
-- `IEventPublisher` (Singleton)
-- `ICommandSender` (Singleton)
+- `AddHermesTransport` is an extension method from the core HermesTransport package.
+- `AddInMemoryBroker` registers the in-memory broker and allows further configuration.
+- Use `UseForCommands()`, `UseForEvents()`, or `UseForMessages()` to specify which message types the broker should handle.
 
 ## 📝 Logging and Exception Handling
 

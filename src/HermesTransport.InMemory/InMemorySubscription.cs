@@ -1,68 +1,84 @@
-using HermesTransport;
 using System.Threading.Channels;
+using HermesTransport.Messaging;
+using HermesTransport.Subscriptions;
+using Microsoft.Extensions.Logging;
 
 namespace HermesTransport.InMemory;
 
-internal class InMemorySubscription<TMessage> : ISubscription, IInternalSubscription, IDisposable, IAsyncDisposable
-    where TMessage : IMessage
+internal sealed class InMemorySubscription<TMessage> : ISubscription where TMessage : IMessage
 {
-    private readonly string _topic;
     private readonly InMemoryMessageBroker _broker;
-    private readonly IMessageHandler<TMessage> _handler;
-    private readonly SubscriptionOptions _options;
-    private readonly Channel<IMessage> _messageQueue;
     private readonly CancellationTokenSource _cancellationTokenSource = new();
+    private readonly IMessageHandler<TMessage> _handler;
+    private readonly ILogger _logger;
+    private readonly Channel<IMessage> _messageQueue;
+    private readonly SubscriptionOptions _options;
     private readonly SemaphoreSlim _semaphore;
+    private readonly string _topic;
+    private bool _disposed;
     private Task? _processingTask;
-    private bool _isActive = false;
-    private bool _disposed = false;
-
-    public string SubscriptionId { get; } = Guid.NewGuid().ToString();
-    public bool IsActive => _isActive;
 
     public InMemorySubscription(
-        string topic, 
+        string topic,
         InMemoryMessageBroker broker,
-        IMessageHandler<TMessage> handler, 
-        SubscriptionOptions options)
+        IMessageHandler<TMessage> handler,
+        SubscriptionOptions options, ILogger logger)
     {
         _topic = topic;
         _broker = broker;
         _handler = handler;
         _options = options;
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _semaphore = new SemaphoreSlim(_options.MaxConcurrency, _options.MaxConcurrency);
-        _messageQueue = Channel.CreateUnbounded<IMessage>();
+        IsActive = false;
+        _messageQueue = Channel.CreateUnbounded<IMessage>(new UnboundedChannelOptions { SingleReader = true });
     }
+
+    public async Task DeliverMessageAsync(IMessage message, CancellationToken cancellation = default)
+    {
+        if (!IsActive) return;
+
+        // Only deliver messages of the correct type
+        if (message is TMessage) await _messageQueue.Writer.WriteAsync(message, cancellation);
+    }
+
+    public void Complete()
+    {
+        _messageQueue.Writer.Complete();
+    }
+
+    public string SubscriptionId { get; } = Guid.NewGuid().ToString();
+    public bool IsActive { get; private set; }
 
     public Task StartAsync(CancellationToken cancellationToken = default)
     {
-        if (_isActive) return Task.CompletedTask;
+        if (IsActive) return Task.CompletedTask;
 
-        _isActive = true;
-        
+        IsActive = true;
+
         // Register with broker
         _broker.AddSubscription(_topic, this);
-        
+
         // Start message processing task
         _processingTask = ProcessMessagesAsync(_cancellationTokenSource.Token);
-        
+
         return Task.CompletedTask;
     }
 
     public async Task StopAsync(CancellationToken cancellationToken = default)
     {
-        if (!_isActive) return;
+        if (!IsActive) return;
 
-        _isActive = false;
-        
+        IsActive = false;
+
         // Unregister from broker
         _broker.RemoveSubscription(_topic, this);
-        
+
         // Complete the message queue
-        _messageQueue.Writer.Complete();
-        
+        Complete();
+
         // Cancel processing
-        _cancellationTokenSource.Cancel();
+        await _cancellationTokenSource.CancelAsync();
 
         if (_processingTask != null)
         {
@@ -77,20 +93,59 @@ internal class InMemorySubscription<TMessage> : ISubscription, IInternalSubscrip
         }
     }
 
-    public async Task DeliverMessageAsync(IMessage message)
+    public async ValueTask DisposeAsync()
     {
-        if (!_isActive) return;
-        
-        // Only deliver messages of the correct type
-        if (message is TMessage)
+        if (_disposed) return;
+
+        await StopAsync();
+
+        _cancellationTokenSource.Dispose();
+        _semaphore.Dispose();
+        _disposed = true;
+    }
+
+    private async Task ProcessMessage(IMessage message, CancellationToken cancellationToken)
+    {
+        // Cast to the expected type (we already filtered in DeliverMessageAsync)
+        if (message is TMessage typedMessage)
         {
-            await _messageQueue.Writer.WriteAsync(message);
+            // For concurrent processing, we don't wait for the task to complete
+            // The semaphore handles the concurrency limit
+            if (_options.MaxConcurrency == 1)
+            {
+                // For sequential processing, await each message
+                await ProcessMessageAsync(typedMessage, cancellationToken);
+            }
+            else
+            {
+                // For concurrent processing, start the task but don't await it
+                // The semaphore ensures we don't exceed the concurrency limit
+                _ = ProcessMessageAsync(typedMessage, cancellationToken);
+            }
+        }
+        else
+        {
+            _logger.LogWarning("Received message of type {MessageType} but expected {ExpectedType}", message.GetType().Name,
+                typeof(TMessage).Name);
         }
     }
 
-    public void Complete()
+    private async Task ProcessMessageAsync(TMessage message, CancellationToken cancellationToken)
     {
-        _messageQueue.Writer.Complete();
+        await _semaphore.WaitAsync(cancellationToken);
+        try
+        {
+            await _handler.HandleAsync(message, cancellationToken);
+            _logger.LogDebug("Processed message of type {MessageType} with ID {MessageId}", typeof(TMessage).Name, message.MessageId);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error processing message of type {MessageType}", typeof(TMessage).Name);
+        }
+        finally
+        {
+            _semaphore.Release();
+        }
     }
 
     private async Task ProcessMessagesAsync(CancellationToken cancellationToken)
@@ -101,76 +156,12 @@ internal class InMemorySubscription<TMessage> : ISubscription, IInternalSubscrip
             {
                 if (cancellationToken.IsCancellationRequested) break;
 
-                // Cast to the expected type (we already filtered in DeliverMessageAsync)
-                if (message is TMessage typedMessage)
-                {
-                    // For concurrent processing, we don't wait for the task to complete
-                    // The semaphore handles the concurrency limit
-                    if (_options.MaxConcurrency == 1)
-                    {
-                        // For sequential processing, await each message
-                        await ProcessMessageAsync(typedMessage, cancellationToken);
-                    }
-                    else
-                    {
-                        // For concurrent processing, start the task but don't await it
-                        // The semaphore ensures we don't exceed the concurrency limit
-                        _ = ProcessMessageAsync(typedMessage, cancellationToken);
-                    }
-                }
+                await ProcessMessage(message, cancellationToken);
             }
         }
         catch (OperationCanceledException)
         {
             // Expected when stopping
         }
-    }
-
-    private async Task ProcessMessageAsync(TMessage message, CancellationToken cancellationToken)
-    {
-        await _semaphore.WaitAsync(cancellationToken);
-        try
-        {
-            await _handler.HandleAsync(message, cancellationToken);
-        }
-        catch (Exception ex)
-        {
-            // Log error to console for now (would use ILogger in production)
-            Console.WriteLine($"Error processing message {message.MessageId}: {ex.Message}");
-        }
-        finally
-        {
-            _semaphore.Release();
-        }
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        if (_disposed) return;
-
-        await StopAsync();
-        
-        _cancellationTokenSource.Dispose();
-        _semaphore.Dispose();
-        _disposed = true;
-    }
-
-    // Keep the synchronous Dispose for compatibility
-    public void Dispose()
-    {
-        if (_disposed) return;
-
-        try
-        {
-            StopAsync().GetAwaiter().GetResult();
-        }
-        catch
-        {
-            // Ignore exceptions during disposal
-        }
-        
-        _cancellationTokenSource.Dispose();
-        _semaphore.Dispose();
-        _disposed = true;
     }
 }

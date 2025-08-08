@@ -1,11 +1,14 @@
 ﻿using HermesTransport;
 using HermesTransport.InMemory;
+using HermesTransport.InMemory.Configuration;
+using HermesTransport.Messaging;
+using HermesTransport.Subscriptions;
 
 Console.WriteLine("🚀 HermesTransport.InMemory - Basic Usage Example");
 Console.WriteLine("================================================");
 
 // Create broker with default synchronous dispatch
-var broker = new InMemoryMessageBroker();
+var broker = new InMemoryMessageBroker(new InMemoryBrokerOptions());
 await broker.ConnectAsync();
 
 // Get components

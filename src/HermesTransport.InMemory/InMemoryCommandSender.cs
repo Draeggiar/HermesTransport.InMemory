@@ -1,4 +1,5 @@
 using HermesTransport;
+using HermesTransport.Messaging;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
@@ -18,7 +19,7 @@ internal class InMemoryCommandSender : ICommandSender
     public async Task SendCommandAsync<TCommand>(TCommand command, CancellationToken cancellationToken = default) 
         where TCommand : ICommand
     {
-        if (command == null)
+        if (Equals(command, default(TCommand)))
         {
             var argumentException = new ArgumentNullException(nameof(command), "Command cannot be null");
             _logger.LogError(argumentException, "Attempted to send null command of type {CommandType}", typeof(TCommand).Name);

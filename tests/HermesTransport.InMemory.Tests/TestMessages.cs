@@ -1,4 +1,5 @@
 using HermesTransport;
+using HermesTransport.Messaging;
 
 namespace HermesTransport.InMemory.Tests.TestMessages;
 

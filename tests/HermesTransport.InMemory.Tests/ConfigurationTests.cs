@@ -1,5 +1,7 @@
 using HermesTransport;
+using HermesTransport.InMemory.Configuration;
 using HermesTransport.InMemory.Tests.TestMessages;
+using HermesTransport.Subscriptions;
 using Xunit;
 
 namespace HermesTransport.InMemory.Tests;
@@ -64,7 +66,7 @@ public class ConfigurationTests
         
         // Cleanup
         await subscription.StopAsync();
-        subscription.Dispose();
+        await subscription.DisposeAsync();
     }
 
     [Fact]

@@ -1,3 +1,4 @@
+using HermesTransport.InMemory.Configuration;
 using HermesTransport.InMemory.Tests.TestMessages;
 using Xunit;
 
@@ -9,7 +10,7 @@ public class InMemoryMessageBrokerTests
     public async Task ConnectAsync_Should_Set_IsConnected_To_True()
     {
         // Arrange
-        var broker = new InMemoryMessageBroker();
+        var broker = new InMemoryMessageBroker(new InMemoryBrokerOptions());
         
         // Act
         await broker.ConnectAsync();
@@ -22,7 +23,7 @@ public class InMemoryMessageBrokerTests
     public async Task DisconnectAsync_Should_Set_IsConnected_To_False()
     {
         // Arrange
-        var broker = new InMemoryMessageBroker();
+        var broker = new InMemoryMessageBroker(new InMemoryBrokerOptions());
         await broker.ConnectAsync();
         
         // Act
@@ -36,7 +37,7 @@ public class InMemoryMessageBrokerTests
     public async Task CreateTopicAsync_Should_Create_New_Topic()
     {
         // Arrange
-        var broker = new InMemoryMessageBroker();
+        var broker = new InMemoryMessageBroker(new InMemoryBrokerOptions());
         var topicName = "test-topic";
         
         // Act
@@ -51,7 +52,7 @@ public class InMemoryMessageBrokerTests
     public async Task DeleteTopicAsync_Should_Remove_Topic()
     {
         // Arrange
-        var broker = new InMemoryMessageBroker();
+        var broker = new InMemoryMessageBroker(new InMemoryBrokerOptions());
         var topicName = "test-topic";
         await broker.CreateTopicAsync(topicName);
         
@@ -67,7 +68,7 @@ public class InMemoryMessageBrokerTests
     public void GetPublisher_Should_Return_Message_Publisher()
     {
         // Arrange
-        var broker = new InMemoryMessageBroker();
+        var broker = new InMemoryMessageBroker(new InMemoryBrokerOptions());
         
         // Act
         var publisher = broker.GetPublisher();
@@ -80,7 +81,7 @@ public class InMemoryMessageBrokerTests
     public void GetSubscriber_Should_Return_Message_Subscriber()
     {
         // Arrange
-        var broker = new InMemoryMessageBroker();
+        var broker = new InMemoryMessageBroker(new InMemoryBrokerOptions());
         
         // Act
         var subscriber = broker.GetSubscriber();
@@ -93,7 +94,7 @@ public class InMemoryMessageBrokerTests
     public void GetEventPublisher_Should_Return_Event_Publisher()
     {
         // Arrange
-        var broker = new InMemoryMessageBroker();
+        var broker = new InMemoryMessageBroker(new InMemoryBrokerOptions());
         
         // Act
         var eventPublisher = broker.GetEventPublisher();
@@ -106,7 +107,7 @@ public class InMemoryMessageBrokerTests
     public void GetCommandSender_Should_Return_Command_Sender()
     {
         // Arrange
-        var broker = new InMemoryMessageBroker();
+        var broker = new InMemoryMessageBroker(new InMemoryBrokerOptions());
         
         // Act
         var commandSender = broker.GetCommandSender();
