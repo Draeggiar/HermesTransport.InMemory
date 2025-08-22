@@ -1,0 +1,45 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{03BEC70D-6019-4584-96AC-C0C4F972363C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HermesTransport.InMemory", "src\HermesTransport.InMemory\HermesTransport.InMemory.csproj", "{D13BCE39-F33D-4641-A5DB-801E83200367}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{D815A2C5-E0D5-4322-8277-A33DF1C024F4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HermesTransport.InMemory.Tests", "tests\HermesTransport.InMemory.Tests\HermesTransport.InMemory.Tests.csproj", "{A56F00E3-517E-4D5E-9EB5-E0F5495B6B5C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{DA745E82-5E85-4557-9208-07857B53DFD6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasicUsageExample", "examples\BasicUsageExample\BasicUsageExample.csproj", "{0D06C1EB-171B-472A-8E42-24B3A0F37688}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D13BCE39-F33D-4641-A5DB-801E83200367}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D13BCE39-F33D-4641-A5DB-801E83200367}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D13BCE39-F33D-4641-A5DB-801E83200367}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D13BCE39-F33D-4641-A5DB-801E83200367}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A56F00E3-517E-4D5E-9EB5-E0F5495B6B5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A56F00E3-517E-4D5E-9EB5-E0F5495B6B5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A56F00E3-517E-4D5E-9EB5-E0F5495B6B5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A56F00E3-517E-4D5E-9EB5-E0F5495B6B5C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D06C1EB-171B-472A-8E42-24B3A0F37688}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D06C1EB-171B-472A-8E42-24B3A0F37688}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D06C1EB-171B-472A-8E42-24B3A0F37688}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D06C1EB-171B-472A-8E42-24B3A0F37688}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D13BCE39-F33D-4641-A5DB-801E83200367} = {03BEC70D-6019-4584-96AC-C0C4F972363C}
+		{A56F00E3-517E-4D5E-9EB5-E0F5495B6B5C} = {D815A2C5-E0D5-4322-8277-A33DF1C024F4}
+		{0D06C1EB-171B-472A-8E42-24B3A0F37688} = {DA745E82-5E85-4557-9208-07857B53DFD6}
+	EndGlobalSection
+EndGlobal
