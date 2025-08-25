@@ -1,6 +1,8 @@
-# HermesTransport.InMemory
+# HermesTransport.InMemory [![Build status](https://github.com/Draeggiar/HermesTransport.InMemory/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/Draeggiar/HermesTransport.InMemory/actions)
 
 An in-memory message broker implementation for the HermesTransport framework, providing fast, reliable messaging for testing and lightweight applications.
+
+[![HermesTransport](https://raw.githubusercontent.com/Draeggiar/HermesTransport/master/assets/icon.png)](https://github.com/Draeggiar/HermesTransport.InMemory)
 
 ## 🚀 Features
 
